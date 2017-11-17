@@ -1,0 +1,34 @@
+<?php
+
+  require_once $_SERVER["DOCUMENT_ROOT"] . "/projinteg/model/MedModel.php";
+
+  $MedModel = new MedModel();
+
+  $acao = $_GET["acao"];
+
+  if($acao == "create"){
+  		$Nome = $_POST["nome"];
+      $CRM = $_POST["CRM"];
+      $IdEspecialidade = $_POST["IdEspecialidade"];
+     
+      $MedModel->inserir($Nome, $CRM, $IdEspecialidade);
+  		
+      echo "<div class='card-panel teal lighten-2'>Medico inserido.</div>";
+  }  
+
+  if($acao == "update"){
+
+    $idMedico = $_POST["idMedico"];
+    $Nome = $_POST["nome"];
+    $CRM = $_POST["CRM"];
+    $IdEspecialidade = $_POST["IdEspecialidade"];
+    
+    $MedModel->alterar($idMedico, $Nome, $CRM, $IdEspecialidade);
+
+    echo "<meta HTTP-EQUIV='refresh' CONTENT='1'>";
+    echo "<div class='card-panel teal lighten-2'>Obra alterada.</div>";
+
+  }
+
+
+?>
