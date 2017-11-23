@@ -26,7 +26,15 @@ if($acao == "continuar"){
 		<input class="filled-in" type="checkbox" id="sintoma<?=$cont?>" name="sintoma<?=$cont?>" value="<?= $ss["idSintoma"]?>"/>
 		<label for="sintoma<?=$cont?>"><?= $ss["DescricaoSintoma"]?></label><br>
 
-		<?php }
+		<?php }?>						
+		<ul class="list-inline banner-social-buttons">
+			<li class="list-inline-item">
+				<button class="btn btn-default btn-lg" type="button" name="finalizar" id="finalizar" onclick="enviar('/projinteg/controller/PiController.php?acao=finalizar')">
+					<span class="network-name">Analisar</span>
+				</button>
+			</li>
+		</ul>
+		<?php
 
 	}else if($acao == "avaliar"){
 		$qtdsintomas = $piModel->analisar();
@@ -42,7 +50,7 @@ if($acao == "continuar"){
 		$resultado = $piModel->resultado();
 
 		foreach ($resultado as $r) {
-			echo "<div class='card-panel teal lighten-2'>Você tem " . number_format ($r["Probabilidade"], 1) ."% de chance de estar com " . $r["NomeDoenca"] . "</div>";
+			echo "<center><div class='alert alert-success col-4 mensagem'>Você tem " . number_format ($r["Probabilidade"], 1) ."% de chance de estar com " . $r["NomeDoenca"] . "</div></center>";
 		}
 	}
 
