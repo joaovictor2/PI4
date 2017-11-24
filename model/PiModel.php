@@ -2,13 +2,11 @@
 
 require_once $_SERVER["DOCUMENT_ROOT"] . "/projinteg/config/BancoDados.php";
 
-
 class PiModel{
 
 	private $bd;
 	private $pesquisaSintoma = "";
-	private $pesquisaDoenca = "";
-	private $busca = "select sintomadoenca.idDoenca as CodDoenca, doenca.DescricaoDoenca as NomeDoenca, ((count(*)/(select count(sintomadoenca.idSintoma) from sintomadoenca where sintomadoenca.idDoenca = CodDoenca))*100) as Probabilidade from sintomadoenca inner join doenca on sintomadoenca.idDoenca = doenca.idDoenca where sintomadoenca.idSintoma =";
+	private $busca = "select sintomadoenca.idDoenca as CodDoenca, doenca.DescricaoDoenca as NomeDoenca, (((count(*)+1)/(select count(sintomadoenca.idSintoma) from sintomadoenca where sintomadoenca.idDoenca = CodDoenca))*100) as Probabilidade from sintomadoenca inner join doenca on sintomadoenca.idDoenca = doenca.idDoenca where sintomadoenca.idSintoma =";
 	private $fim = "group by sintomadoenca.idDoenca ORDER by Probabilidade desc";
 
 	function __construct(){
@@ -23,26 +21,8 @@ class PiModel{
 		return $sintomas;
 	}
 
-	public function analisar(){
-		$comandoSintomas = "";
-		$comandoSintomas .= $this->pesquisaSintoma;
-		$n = strlen($comandoSintomas) - 29;
-		$comandoSintomas = substr($comandoSintomas, 0, $n);
-		$consulta = $this->bd->prepare("select count(idSintoma) from sintoma where idSintoma = :a");
-		$consulta->bindParam(":a", $comandoSintomas);
-		$consulta->execute();
-
-		$qtdsintomas = $consulta->fetch();
-
-		return $qtdsintomas["count(idSintoma)"];
-	}
-
 	public function selecaoSintoma($idSintoma){
 		$this->pesquisaSintoma = $this->pesquisaSintoma . " $idSintoma " . "or sintomadoenca.idSintoma = ";
-	}
-
-	public function selecionaDoenca($idDoenca){
-		$this->pesquisaDoenca = $this->pesquisaDoenca . " $idDoenca " . "or sintomadoenca.idDoenca = ";
 	}
 
 	public function zeraPesquisa(){
@@ -64,32 +44,18 @@ class PiModel{
 		return $doencas;
 	}
 
-	public function usaRaiz($idSintoma){
-		$consultaDemaisSintomas = $this->bd->prepare("select * from sintomadoenca where idSintoma = :idSintoma");
+	public function listarSintomasSecundarios($raiz){
+		$listar = $this->bd->prepare("select sintomadoenca.idSintoma, sintoma.DescricaoSintoma from sintomadoenca inner join sintoma on sintomadoenca.idSintoma = sintoma.idSintoma where sintomadoenca.idDoenca in(select sintomadoenca.iDdoenca from sintomadoenca WHERE sintomadoenca.idSintoma = :sintomaRaiz) and sintomadoenca.idSintoma <> :sintomaRaiz");
 
-		$consultaDemaisSintomas->bindParam(":idSintoma", $idSintoma);
+		$listar->bindParam(":sintomaRaiz", $raiz);
 
-		$consultaDemaisSintomas->execute();
-
-		$doencasEncontradas = $consultaDemaisSintomas->fetchAll();
-
-		return $doencasEncontradas;
-
-	}
-
-	public function listaSintomasSecundarios($raiz){
-		$sintomasSecundarios = "select *, s.DescricaoSintoma from sintomadoenca as sd inner join sintoma as s on s.idSintoma = sd.idSintoma where idDoenca = " . $this->pesquisaDoenca;
-		$n = strlen($sintomasSecundarios) - 28;
-		$sintomasSecundarios = substr($sintomasSecundarios, 0, $n);
-		$sintomasSecundarios .= " and sd.idSintoma <> $raiz";
-
-		$listar = $this->bd->query("$sintomasSecundarios");
+		$listar->execute();
 
 		$resultadoSintomas = $listar->fetchAll();
 
 		return $resultadoSintomas;
 	}
 
-}
+	}
 
 ?>

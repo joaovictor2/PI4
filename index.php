@@ -6,6 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta name="description" content="">
 	<meta name="author" content="">
+	<link rel="icon" href="/projinteg/img/icone.png">
 	<title>O que eu tenho?</title>
 	<!-- Bootstrap core CSS -->
 	<link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -25,7 +26,7 @@
 	<nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
 		<div class="container">
 			<a class="navbar-brand js-scroll-trigger" href="#page-top">O que eu tenho?</a>
-			<button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">Menu<i class="fa fa-bars"></i></button>
+			<button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">Menu  <i class="fa fa-bars"></i></button>
 			<div class="collapse navbar-collapse" id="navbarResponsive">
 				<ul class="navbar-nav ml-auto">
 					<li class="nav-item">
@@ -82,15 +83,15 @@
 	<section id="diagnostico" class="download-section content-section text-center">
 		<div class="container">
 			<div class="col-lg-12 mx-auto">
-				<h2>Faça sua consulta</h2>
+				<div id="finalmente"><h2>Faça sua consulta</h2></div>
 
 				<?php require_once $_SERVER["DOCUMENT_ROOT"] . "/projinteg/model/PiModel.php";
 				$piModel = new PiModel();
 				$sintomas = $piModel->listarSintomas();?>
 
 				<div class="card-panel">
-					<h4 class="center-align">Selecione seu sintoma mais aparente</h4>
 					<form method="post" id="formsintoma">
+					<h4 class="center-align">Selecione seu sintoma mais aparente</h4>
 						<div class="container">
 							<div class="row">
 								<div class="col">
@@ -118,8 +119,12 @@
 					</form>
 				</div>
 			</div>
-		</div>	
-		<div id="mensagem"></div>
+		</div>
+		<form method="post" id="formresultado">
+			<div id="mensagem"></div>
+		</form>
+
+		<div id="fim"></div>
 	</section>
 
 
@@ -210,6 +215,7 @@
 	<script type="text/javascript" src="js/jquery.maskedinput.js"></script>
 	<!-- Custom scripts for this template -->
 	<script src="js/grayscale.min.js"></script>
+	
 	<script type="text/javascript">
 		function enviar(url)
 		{
@@ -221,6 +227,21 @@
 					$("#mensagem").html(data);
 					$("#formsintoma").trigger('reset'); 
 					$("#formsintoma").hide("slow");
+				}
+			})
+		}
+
+		function terminar(url)
+		{
+			$.ajax({
+				url: url,
+				method: $("#formresultado").attr("method"),
+				data: $("#formresultado").serialize(),
+				success: function(data){
+					$("#fim").html(data);
+					$("#finalmente").html("<h2>Resultado do seu diagnóstico</h2>");
+					$("#formresultado").trigger('reset'); 
+					$("#formresultado").hide("slow");
 				}
 			})
 		}	
