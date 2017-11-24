@@ -8,7 +8,7 @@ class BancoDados{
 
 		if( isset($conexao) == false){
 
-			$conexao = new PDO("mysql:dbname=piquartosementre;host=localhost","root","");
+			$conexao = new PDO("mysql:dbname=piquartosemestre;host=localhost","root","");
 			$conexao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			$conexao->exec("set names utf8");
 
