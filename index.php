@@ -6,6 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta name="description" content="">
 	<meta name="author" content="">
+	<link rel="icon" href="/projinteg/img/icone.png">
 	<title>O que eu tenho?</title>
 	<!-- Bootstrap core CSS -->
 	<link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -25,7 +26,7 @@
 	<nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
 		<div class="container">
 			<a class="navbar-brand js-scroll-trigger" href="#page-top">O que eu tenho?</a>
-			<button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">Menu<i class="fa fa-bars"></i></button>
+			<button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">Menu  <i class="fa fa-bars"></i></button>
 			<div class="collapse navbar-collapse" id="navbarResponsive">
 				<ul class="navbar-nav ml-auto">
 					<li class="nav-item">
@@ -82,15 +83,15 @@
 	<section id="diagnostico" class="download-section content-section text-center">
 		<div class="container">
 			<div class="col-lg-12 mx-auto">
-				<h2>Faça sua consulta</h2>
+				<div id="finalmente"><h2>Faça sua consulta</h2></div>
 
 				<?php require_once $_SERVER["DOCUMENT_ROOT"] . "/projinteg/model/PiModel.php";
 				$piModel = new PiModel();
 				$sintomas = $piModel->listarSintomas();?>
 
 				<div class="card-panel">
-					<h4 class="center-align">Selecione seu sintoma mais aparente</h4>
 					<form method="post" id="formsintoma">
+					<h4 class="center-align">Selecione seu sintoma mais aparente</h4>
 						<div class="container">
 							<div class="row">
 								<div class="col">
@@ -118,8 +119,12 @@
 					</form>
 				</div>
 			</div>
-		</div>	
-		<div id="mensagem"></div>
+		</div>
+		<form method="post" id="formresultado">
+			<div id="mensagem"></div>
+		</form>
+
+		<div id="fim"></div>
 	</section>
 
 
@@ -152,7 +157,7 @@
 						<br>
 						<button type="submit" class="btn btn-default" name="salvar">Salvar</button>
 					</form>
-					<a href="#diagnostico" class="btn btn-circle js-scroll-trigger">
+					<a href="#contact" class="btn btn-circle js-scroll-trigger">
 						<i class="fa fa-angle-double-down animated"></i>
 					</a>
 				</div>
@@ -166,41 +171,30 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-lg-8 mx-auto">
-					<h2>Contact Start Bootstrap</h2>
-					<p>Feel free to leave us a comment on the
-						<a href="http://startbootstrap.com/template-overviews/grayscale/">Grayscale template overview page</a>
-					on Start Bootstrap to give some feedback about this theme!</p>
+					<h2>Contato</h2>
+					<p>Conheça um pouco do nosso processo de desenvolvimento através do GitHub do nosso projeto!</p>
 					<ul class="list-inline banner-social-buttons">
 						<li class="list-inline-item">
-							<a href="https://twitter.com/SBootstrap" class="btn btn-default btn-lg">
-								<i class="fa fa-twitter fa-fw"></i>
-								<span class="network-name">Twitter</span>
-							</a>
-						</li>
-						<li class="list-inline-item">
-							<a href="https://github.com/BlackrockDigital/startbootstrap" class="btn btn-default btn-lg">
+							<a href="https://github.com/joaovictor2/PI4" class="btn btn-default btn-lg">
 								<i class="fa fa-github fa-fw"></i>
 								<span class="network-name">Github</span>
 							</a>
 						</li>
+					</ul>
+					<h2>Desenvolvido por: </h2>
+					<ul class="list-inline banner-social-buttons">
 						<li class="list-inline-item">
-							<a href="https://plus.google.com/+Startbootstrap/posts" class="btn btn-default btn-lg">
-								<i class="fa fa-google-plus fa-fw"></i>
-								<span class="network-name">Google+</span>
-							</a>
+							<p>Carlos Henrique - carlosnunes@unipam.edu.br    </p>
+							<p>Fernando Amaral - fernandoamaral@unipam.edu.br </p>
+							<p>João Victor - joaovictor1@unipam.edu.br        </p>
+							<p>Stéphane Castro - stephanecs@unipam.edu.br     </p>
+							<p>Ygor Ribeiro - ygorribeiro@unipam.edu.br       </p>
 						</li>
 					</ul>
 				</div>
 			</div>
 		</div>
 	</section>
-
-	<!-- Footer -->
-	<footer>
-		<div class="container text-center">
-			<p>Copyright &copy; Your Website 2017</p>
-		</div>
-	</footer>
 
 	<!-- Bootstrap core JavaScript -->
 	<script src="vendor/jquery/jquery.min.js"></script>
@@ -210,6 +204,7 @@
 	<script type="text/javascript" src="js/jquery.maskedinput.js"></script>
 	<!-- Custom scripts for this template -->
 	<script src="js/grayscale.min.js"></script>
+	
 	<script type="text/javascript">
 		function enviar(url)
 		{
@@ -221,6 +216,21 @@
 					$("#mensagem").html(data);
 					$("#formsintoma").trigger('reset'); 
 					$("#formsintoma").hide("slow");
+				}
+			})
+		}
+
+		function terminar(url)
+		{
+			$.ajax({
+				url: url,
+				method: $("#formresultado").attr("method"),
+				data: $("#formresultado").serialize(),
+				success: function(data){
+					$("#fim").html(data);
+					$("#finalmente").html("<h2>Resultado do seu diagnóstico</h2>");
+					$("#formresultado").trigger('reset'); 
+					$("#formresultado").hide("slow");
 				}
 			})
 		}	
