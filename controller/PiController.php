@@ -39,7 +39,7 @@ if($acao == "continuar"){
 			}
 		}
 
-		$resultado = $piModel->resultado();
+		$resultado = $piModel->resultado("multiplos");
 
 		foreach ($resultado as $r) {
 			echo "<center><div class='alert alert-success col-4 mensagem'>Você tem " . number_format ($r["Probabilidade"], 1) ."% de chance de estar com " . $r["NomeDoenca"] . "</div></center>";
@@ -48,7 +48,7 @@ if($acao == "continuar"){
 	}else if($acao == "finalizar"){
 		$raiz = $_POST["primario"];
 		$piModel->selecaoSintoma($raiz);
-		$resultado = $piModel->resultado();
+		$resultado = $piModel->resultado("unico");
 
 		foreach ($resultado as $r) {
 			echo "<center><div class='alert alert-success col-4 mensagem'>Você tem " . number_format ($r["Probabilidade"], 1) ."% de chance de estar com " . $r["NomeDoenca"] . "</div></center>";

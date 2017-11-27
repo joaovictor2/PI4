@@ -6,8 +6,9 @@ class PiModel{
 
 	private $bd;
 	private $pesquisaSintoma = "";
-	private $busca = "select sintomadoenca.idDoenca as CodDoenca, doenca.DescricaoDoenca as NomeDoenca, (((count(*)+1)/(select count(sintomadoenca.idSintoma) from sintomadoenca where sintomadoenca.idDoenca = CodDoenca))*100) as Probabilidade from sintomadoenca inner join doenca on sintomadoenca.idDoenca = doenca.idDoenca where sintomadoenca.idSintoma =";
-	private $fim = "group by sintomadoenca.idDoenca ORDER by Probabilidade desc";
+	private $prefixoConsultaBanco = "select sintomadoenca.idDoenca as CodDoenca, doenca.DescricaoDoenca as NomeDoenca, (((count(*)+";
+	private $posfixoConsultaBanco = ")/(select count(sintomadoenca.idSintoma) from sintomadoenca where sintomadoenca.idDoenca = CodDoenca))*100) as Probabilidade from sintomadoenca inner join doenca on sintomadoenca.idDoenca = doenca.idDoenca where sintomadoenca.idSintoma =";
+	private $ordenacaoResultadoConsulta = "group by sintomadoenca.idDoenca ORDER by Probabilidade desc";
 
 	function __construct(){
 		$this->bd = BancoDados::obterConexao();
@@ -27,21 +28,6 @@ class PiModel{
 
 	public function zeraPesquisa(){
 		$this->pesquisaSintoma = "";
-		$this->pesquisaDoenca = "";
-	}
-
-	public function resultado(){
-		$comando = $this->busca;
-		$comando .= $this->pesquisaSintoma;
-		$n = strlen($comando) - 29;
-		$comando = substr($comando, 0, $n);
-		$comando .= $this->fim;
-
-		$consulta = $this->bd->query("$comando");
-
-		$doencas = $consulta->fetchAll();
-
-		return $doencas;
 	}
 
 	public function listarSintomasSecundarios($raiz){
@@ -54,6 +40,30 @@ class PiModel{
 		$resultadoSintomas = $listar->fetchAll();
 
 		return $resultadoSintomas;
+	}
+
+	public function resultado($tipoDePesquisa){
+		if($tipoDePesquisa == "multiplos"){
+			$quantidadeVariavelSintoma = "1";
+		}else{
+			$quantidadeVariavelSintoma = "0";
+		}
+
+
+		$codigoBusca = $this->prefixoConsultaBanco . "$quantidadeVariavelSintoma" . $this->posfixoConsultaBanco;
+		$codigoBusca .= $this->pesquisaSintoma;
+		$quantidadeDeCaracteres = strlen($codigoBusca) - 29;
+		$codigoBusca = substr($codigoBusca, 0, $quantidadeDeCaracteres);
+		$codigoBusca .= $this->ordenacaoResultadoConsulta;
+
+
+		$consulta = $this->bd->prepare("$codigoBusca");
+		
+		$consulta->execute();
+
+		$doencas = $consulta->fetchAll();
+
+		return $doencas;
 	}
 
 	}
